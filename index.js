@@ -31,7 +31,6 @@ function addTransaction(idUser, virtualAccount, idMovie, idSchedule, seat, respo
     });
 
     connection.end();
-
 }
 
 app.use((req, res, next) => {
@@ -39,7 +38,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get('/transaksi', function (request, response) {
+app.post('/transaksi', function (request, response) {
     let idUser = request.query.idUser;
     let virtualAccount = request.query.virtualAccount;
     let idMovie = request.query.idMovie;
