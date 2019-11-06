@@ -2,7 +2,7 @@
 const express = require("express");
 const mysql = require('mysql');
 const moment = require('moment');
-
+const bodyParser = require('body-parser');
 const app = express();
 const defaultStatus = "pending";
 
@@ -11,7 +11,7 @@ function addTransaction(idUser, virtualAccount, idMovie, idSchedule, seat, respo
     var connection = mysql.createConnection({
         host: 'localhost',
         user: 'root',
-        password: '',
+        password: 'password',
         database: 'ws-transaksi'
     });
 
@@ -39,12 +39,13 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use(bodyParser.urlencoded({ extended: false }));
 app.post('/transaksi', function (request, response) {
-    let idUser = request.query.idUser;
-    let virtualAccount = request.query.virtualAccount;
-    let idMovie = request.query.idMovie;
-    let idSchedule = request.query.idSchedule;
-    let seat = request.query.seat;
+    let idUser = request.body.idUser;
+    let virtualAccount = request.body.virtualAccount;
+    let idMovie = request.body.idMovie;
+    let idSchedule = request.body.idSchedule;
+    let seat = request.body.seat;
     addTransaction(idUser, virtualAccount, idMovie, idSchedule, seat, response);
 });
 
