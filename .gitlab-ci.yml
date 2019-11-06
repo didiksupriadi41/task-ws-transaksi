@@ -1,0 +1,23 @@
+
+# Node docker image on which this would be run
+image: node:10.16.3
+
+#This command is run before actual stages start running
+before_script:
+  - npm install
+
+stages:
+  - test
+  - deploy
+
+lint:
+  stage: test
+  script:
+    - npm run lint
+
+deployToAWS:
+  only:
+    - master
+  stage: deploy
+  script:
+    - bash deploy.sh
