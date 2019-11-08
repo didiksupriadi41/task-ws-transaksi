@@ -10,11 +10,10 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     next();
 });
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.post('/transaksi', function (request, response) {
+app.post('/add', function (request, response) {
     let idUser = request.body.idUser;
     let virtualAccount = request.body.virtualAccount;
     let idMovie = request.body.idMovie;

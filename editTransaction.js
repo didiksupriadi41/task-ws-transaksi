@@ -1,59 +1,59 @@
-const mysql = require('mysql');
+// const mysql = require('mysql');
 const moment = require('moment');
+const database = require('./database.js');
 
 function editCreationTime(idTransaksi, newStatus, response) {
-    var connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: 'password',
-        database: 'ws-transaksi'
-    });
+    var query = `UPDATE transaksi SET status = ? where idTransaksi = ?`;
 
-    connection.connect();
+    let db = database.connect();
 
-    var query = `UPDATE TransaksiTiket SET status = ${newStatus} where idTransaksi = ${idTransaksi}`;
-    connection.query(query, function (err) {
-        if (err) response.sendStatus(400).send("Wrong Query!");
-
-        response.send({
-            idTransaksi: idTransaksi,
-            status: newStatus
+    db.run(query, [newStatus, idTransaksi],
+        function (err) {
+            if (err) {
+                response.status(400).send("Wrong Query!");
+                console.error(err.message);
+            }
+            response.send({
+                idTransaksi: idTransaksi,
+                status: newStatus
+            });
         });
-    });
 
-    connection.end();
+    database.end(db);
 }
 
 module.exports = function editTransaction(idTransaksi, response) {
-    var connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: 'password',
-        database: 'ws-transaksi'
-    });
+    if (idTransaksi && response) {
 
-    var now = moment();
-    var waktuTransaksiDibuat;
-    var selisihWaktuBookingBayar;
-    var statusTerkini;
+        var now = moment();
+        var waktuTransaksiDibuat;
+        var selisihWaktuBookingBayar;
+        var statusTerkini;
 
-    connection.connect();
-    var query = `SELECT creationTime from TransaksiTiket where idTransaksi = ${idTransaksi}`;
-    connection.query(query, async function (err, result) {
-        if (err) response.sendStatus(400).send("Wrong Query!");
-        await (waktuTransaksiDibuat = result[0].creationTime);
-        waktuTransaksiDibuat = moment(waktuTransaksiDibuat);
-        selisihWaktuBookingBayar = moment.duration(now.diff(waktuTransaksiDibuat, 'seconds'))
-        // console.log(selisihWaktuBookingBayar);
+        let db = database.connect();
+        var query = `SELECT creationTime, status from transaksi where idTransaksi = ?`;
 
-        if (selisihWaktuBookingBayar > 120) {
-            statusTerkini = "'cancelled'";
-        } else {
-            statusTerkini = "'success'";
-        }
+        db.get(query, idTransaksi, (err, row) => {
+            // console.log(row);
+            if (err) response.status(400).send("Wrong Query!");
+            waktuTransaksiDibuat = row.creationTime;
+            statusTerkini = row.status;
+            waktuTransaksiDibuat = moment(waktuTransaksiDibuat);
+            selisihWaktuBookingBayar = now.diff(waktuTransaksiDibuat, 'seconds');
+            // console.log(selisihWaktuBookingBayar);
 
-        editCreationTime(idTransaksi, statusTerkini, response);
-    });
+            if (selisihWaktuBookingBayar > 10 && statusTerkini != "success") {
+                statusTerkini = "cancelled";
+            } else {
+                statusTerkini = "success";
+            }
 
-    connection.end();
+            editCreationTime(idTransaksi, statusTerkini, response);
+
+        });
+
+        database.end(db);
+    } else {
+        response.status(400).send("Wrong Query!");
+    }
 }
