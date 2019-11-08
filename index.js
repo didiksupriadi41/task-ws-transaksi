@@ -4,17 +4,17 @@ const bodyParser = require('body-parser');
 const addTransaction = require('./addTransaction.js');
 const editTransaction = require('./editTransaction.js');
 const app = express();
+const { port } = require("./config");
 
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     next();
 });
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.post('/transaksi', function (request, response) {
+app.post('/add', function (request, response) {
     let idUser = request.body.idUser;
     let virtualAccount = request.body.virtualAccount;
     let idMovie = request.body.idMovie;
@@ -28,6 +28,6 @@ app.post('/edit', function (request, response) {
     editTransaction(idTransaksi, response);
 });
 
-app.listen(3000, function () {
-    console.log("Server running on port 3000...");
+app.listen(port, function () {
+    console.log(`Server running on port ${port}...`);
 });
