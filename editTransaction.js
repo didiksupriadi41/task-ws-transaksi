@@ -1,59 +1,69 @@
 const mysql = require('mysql');
 const moment = require('moment');
+const { user, password } = require("./config");
 
 function editCreationTime(idTransaksi, newStatus, response) {
-    var connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: 'password',
-        database: 'ws-transaksi'
-    });
-
-    connection.connect();
-
-    var query = `UPDATE TransaksiTiket SET status = ${newStatus} where idTransaksi = ${idTransaksi}`;
-    connection.query(query, function (err) {
-        if (err) response.sendStatus(400).send("Wrong Query!");
-
-        response.send({
-            idTransaksi: idTransaksi,
-            status: newStatus
+    if (idTransaksi && newStatus && response) {
+        var connection = mysql.createConnection({
+            host: 'localhost',
+            user: user,
+            password: password,
+            database: 'ws-transaksi'
         });
-    });
 
-    connection.end();
+        connection.connect();
+
+        var query = `UPDATE TransaksiTiket SET status =? where idTransaksi =?`;
+        connection.query(query, [newStatus, idTransaksi], function (err) {
+            if (err) response.status(400).send("Wrong Query!");
+
+            response.send({
+                idTransaksi: idTransaksi,
+                status: newStatus
+            });
+        });
+
+        connection.end();
+    } else {
+        response.status(502).send('Somwthing went wrong :/');
+    }
 }
 
 module.exports = function editTransaction(idTransaksi, response) {
-    var connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: 'password',
-        database: 'ws-transaksi'
-    });
+    if (idTransaksi && response) {
 
-    var now = moment();
-    var waktuTransaksiDibuat;
-    var selisihWaktuBookingBayar;
-    var statusTerkini;
+        var connection = mysql.createConnection({
+            host: 'localhost',
+            user: user,
+            password: password,
+            database: 'ws-transaksi'
+        });
 
-    connection.connect();
-    var query = `SELECT creationTime from TransaksiTiket where idTransaksi = ${idTransaksi}`;
-    connection.query(query, async function (err, result) {
-        if (err) response.sendStatus(400).send("Wrong Query!");
-        await (waktuTransaksiDibuat = result[0].creationTime);
-        waktuTransaksiDibuat = moment(waktuTransaksiDibuat);
-        selisihWaktuBookingBayar = moment.duration(now.diff(waktuTransaksiDibuat, 'seconds'))
-        // console.log(selisihWaktuBookingBayar);
+        var now = moment();
+        var waktuTransaksiDibuat;
+        var selisihWaktuBookingBayar;
+        var statusTerkini;
 
-        if (selisihWaktuBookingBayar > 120) {
-            statusTerkini = "'cancelled'";
-        } else {
-            statusTerkini = "'success'";
-        }
+        connection.connect();
+        var query = `SELECT creationTime, status from TransaksiTiket where idTransaksi = ${idTransaksi}`;
+        connection.query(query, async function (err, result) {
+            if (err) response.status(400).send("Wrong Query!");
+            await (waktuTransaksiDibuat = result[0].creationTime);
+            statusTerkini = result[0].status;
+            waktuTransaksiDibuat = moment(waktuTransaksiDibuat);
+            selisihWaktuBookingBayar = now.diff(waktuTransaksiDibuat, 'seconds')
 
-        editCreationTime(idTransaksi, statusTerkini, response);
-    });
+            if (selisihWaktuBookingBayar > 120 && statusTerkini != 'success') {
+                statusTerkini = "cancelled";
+            } else {
+                statusTerkini = "success";
+            }
 
-    connection.end();
+            editCreationTime(idTransaksi, statusTerkini, response);
+        });
+
+        connection.end();
+    } else {
+        response.status(400).send("Wrong Query!");
+    }
 }

@@ -1,30 +1,36 @@
 const mysql = require('mysql');
 const moment = require('moment');
+const { user, password } = require("./config");
 const defaultStatus = "pending";
 
 module.exports = function addTransaction(idUser, virtualAccount, idMovie, idSchedule, seat, response) {
-    var connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: 'password',
-        database: 'ws-transaksi'
-    });
+    if (idUser && virtualAccount && idMovie && idSchedule && seat && response) {
 
-    var now = moment().format("YYYY-MM-DD HH:mm:ss");
-    var idTransaksi = 0;
+        var connection = mysql.createConnection({
+            host: 'localhost',
+            user: user,
+            password: password,
+            database: 'ws-transaksi'
+        });
 
-    connection.connect();
+        var now = moment().format("YYYY-MM-DD HH:mm:ss");
 
-    var query = `INSERT INTO TransaksiTiket \
-            (idUser, virtualAccount, idMovie, idSchedule, seat, creationTime, status) \
-            VALUE (${idUser},${virtualAccount},${idMovie},${idSchedule},${seat},'${now}','${defaultStatus}')`;
+        connection.connect();
 
-    connection.query(query, function (err, result) {
-        if (err) response.sendStatus(400).send("Wrong Query!");
-        idTransaksi = result.insertId;
+        var query = `INSERT INTO TransaksiTiket \
+        (idUser, virtualAccount, idMovie, idSchedule, seat, creationTime, status) \
+        VALUE (?,?,?,?,?,?,?)`;
 
-        response.send({ idTransaksi: idTransaksi });
-    });
+        connection.query(query, [idUser, virtualAccount, idMovie, idSchedule, seat, now, defaultStatus],
+            function (err, result) {
+                if (err) response.status(400).send("Wrong Query!");
+                var idTransaksi = result.insertId;
 
-    connection.end();
+                response.send({ idTransaksi: idTransaksi });
+            });
+
+        connection.end();
+    } else {
+        response.status(400).send("Wrong Query!");
+    }
 }
