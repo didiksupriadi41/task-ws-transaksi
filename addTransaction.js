@@ -19,7 +19,7 @@ module.exports = function addTransaction(idUser, virtualAccount, idMovie, idSche
             (idUser, virtualAccount, idMovie, idSchedule, seat, creationTime, status) \
             VALUE (${idUser},${virtualAccount},${idMovie},${idSchedule},${seat},'${now}','${defaultStatus}')`;
 
-    connection.query(query, function (err, result, fields) {
+    connection.query(query, function (err, result) {
         if (err) response.sendStatus(400).send("Wrong Query!");
         idTransaksi = result.insertId;
 

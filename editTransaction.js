@@ -12,10 +12,10 @@ function editCreationTime(idTransaksi, newStatus, response) {
     connection.connect();
 
     var query = `UPDATE TransaksiTiket SET status = ${newStatus} where idTransaksi = ${idTransaksi}`;
-    connection.query(query, function (err, result, fields) {
+    connection.query(query, function (err) {
         if (err) response.sendStatus(400).send("Wrong Query!");
 
-        response.send({ 
+        response.send({
             idTransaksi: idTransaksi,
             status: newStatus
         });
@@ -35,21 +35,22 @@ module.exports = function editTransaction(idTransaksi, response) {
     var now = moment();
     var waktuTransaksiDibuat;
     var selisihWaktuBookingBayar;
+    var statusTerkini;
 
     connection.connect();
     var query = `SELECT creationTime from TransaksiTiket where idTransaksi = ${idTransaksi}`;
-    connection.query(query, async function (err, result, fields) {
+    connection.query(query, async function (err, result) {
         if (err) response.sendStatus(400).send("Wrong Query!");
         await (waktuTransaksiDibuat = result[0].creationTime);
         waktuTransaksiDibuat = moment(waktuTransaksiDibuat);
         selisihWaktuBookingBayar = moment.duration(now.diff(waktuTransaksiDibuat, 'seconds'))
         // console.log(selisihWaktuBookingBayar);
 
-        if (selisihWaktuBookingBayar > 120){
-            var statusTerkini = "\'cancelled\'";
+        if (selisihWaktuBookingBayar > 120) {
+            statusTerkini = "'cancelled'";
         } else {
-            var statusTerkini = "\'success\'";
-        }    
+            statusTerkini = "'success'";
+        }
 
         editCreationTime(idTransaksi, statusTerkini, response);
     });
