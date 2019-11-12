@@ -48,18 +48,22 @@ module.exports = function editTransaction(idTransaksi, response) {
         var query = `SELECT creationTime, status from TransaksiTiket where idTransaksi = ${idTransaksi}`;
         connection.query(query, async function (err, result) {
             if (err) response.status(400).send("Wrong Query!");
-            await (waktuTransaksiDibuat = result[0].creationTime);
-            statusTerkini = result[0].status;
-            waktuTransaksiDibuat = moment(waktuTransaksiDibuat);
-            selisihWaktuBookingBayar = now.diff(waktuTransaksiDibuat, 'seconds')
+            await (result);
+            if (result.length > 0){
+                statusTerkini = result[0].status;
+                waktuTransaksiDibuat = moment(result[0].creationTime);
+                selisihWaktuBookingBayar = now.diff(waktuTransaksiDibuat, 'seconds')
 
-            if (selisihWaktuBookingBayar > 120 && statusTerkini != 'success') {
-                statusTerkini = "cancelled";
+                if (selisihWaktuBookingBayar > 120 && statusTerkini != 'success') {
+                    statusTerkini = "cancelled";
+                } else {
+                    statusTerkini = "success";
+                }
+
+                editCreationTime(idTransaksi, statusTerkini, response);
             } else {
-                statusTerkini = "success";
+                response.status(403).send('Forbidden');
             }
-
-            editCreationTime(idTransaksi, statusTerkini, response);
         });
 
         connection.end();
