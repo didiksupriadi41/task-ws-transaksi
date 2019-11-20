@@ -1,5 +1,5 @@
 const mysql = require('mysql');
-const { user, password } = require("./config");
+const { user, password, cancelledStatus } = require("./config");
 
 module.exports = function getSeats(idSchedule, response) {
     if (idSchedule && response) {
@@ -13,9 +13,9 @@ module.exports = function getSeats(idSchedule, response) {
 
         connection.connect();
 
-        var query = `SELECT seat FROM TransaksiTiket WHERE idSchedule=?`;
+        var query = `SELECT seat FROM TransaksiTiket WHERE idSchedule=? AND status<>?`;
 
-        connection.query(query, [idSchedule],
+        connection.query(query, [idSchedule, cancelledStatus],
             function (err, result) {
                 if (err) {
                     response.status(400).send("Wrong Query!");
