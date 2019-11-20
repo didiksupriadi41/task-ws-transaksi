@@ -1,6 +1,6 @@
 const mysql = require('mysql');
 const moment = require('moment');
-const { user, password } = require("./config");
+const { user, password, cancelledStatus, successStatus } = require("./config");
 
 function editCreationTime(idTransaksi, newStatus, response) {
     if (idTransaksi && newStatus && response) {
@@ -45,8 +45,8 @@ module.exports = function editTransaction(idTransaksi, response) {
         var statusTerkini;
 
         connection.connect();
-        var query = `SELECT creationTime, status from TransaksiTiket where idTransaksi = ${idTransaksi}`;
-        connection.query(query, async function (err, result) {
+        var query = `SELECT creationTime, status from TransaksiTiket where idTransaksi=?`;
+        connection.query(query, [idTransaksi], async function (err, result) {
             if (err) {
                 response.status(400).send("Wrong Query!");
                 console.log(err);
@@ -57,10 +57,10 @@ module.exports = function editTransaction(idTransaksi, response) {
                 waktuTransaksiDibuat = moment(result[0].creationTime);
                 selisihWaktuBookingBayar = now.diff(waktuTransaksiDibuat, 'seconds')
 
-                if (selisihWaktuBookingBayar > 120 && statusTerkini != 'success') {
-                    statusTerkini = "cancelled";
+                if (selisihWaktuBookingBayar > 120 && statusTerkini != successStatus) {
+                    statusTerkini = cancelledStatus;
                 } else {
-                    statusTerkini = "success";
+                    statusTerkini = successStatus;
                 }
 
                 editCreationTime(idTransaksi, statusTerkini, response);
