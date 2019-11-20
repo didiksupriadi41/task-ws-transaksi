@@ -47,9 +47,12 @@ module.exports = function editTransaction(idTransaksi, response) {
         connection.connect();
         var query = `SELECT creationTime, status from TransaksiTiket where idTransaksi = ${idTransaksi}`;
         connection.query(query, async function (err, result) {
-            if (err) response.status(400).send("Wrong Query!");
+            if (err) {
+                response.status(400).send("Wrong Query!");
+                console.log(err);
+            }
             await (result);
-            if (result.length > 0){
+            if (result.length > 0) {
                 statusTerkini = result[0].status;
                 waktuTransaksiDibuat = moment(result[0].creationTime);
                 selisihWaktuBookingBayar = now.diff(waktuTransaksiDibuat, 'seconds')
