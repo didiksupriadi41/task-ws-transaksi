@@ -1,5 +1,4 @@
 const mysql = require('mysql');
-const moment = require('moment');
 const { user, password } = require("./config");
 
 module.exports = function getTransaction(idUser, response) {
@@ -11,8 +10,6 @@ module.exports = function getTransaction(idUser, response) {
             password: password,
             database: 'ws-transaksi'
         });
-
-        var now = moment().format("YYYY-MM-DD HH:mm:ss");
 
         connection.connect();
 
