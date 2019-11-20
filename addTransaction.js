@@ -5,7 +5,6 @@ const defaultStatus = "pending";
 
 module.exports = function addTransaction(idUser, virtualAccount, idMovie, idSchedule, seat, response) {
     if (idUser && virtualAccount && idMovie && idSchedule && seat && response) {
-
         var connection = mysql.createConnection({
             host: 'localhost',
             user: user,
@@ -23,7 +22,11 @@ module.exports = function addTransaction(idUser, virtualAccount, idMovie, idSche
 
         connection.query(query, [idUser, virtualAccount, idMovie, idSchedule, seat, now, defaultStatus],
             function (err, result) {
-                if (err) response.status(400).send("Wrong Query!");
+
+                if (err) {
+                    response.status(400).send("Wrong Query!");
+                    console.log(err);
+                }
                 var idTransaksi = result.insertId;
 
                 response.send({ idTransaksi: idTransaksi });
