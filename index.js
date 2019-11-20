@@ -3,6 +3,7 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const addTransaction = require('./addTransaction.js');
 const editTransaction = require('./editTransaction.js');
+const getTransaction = require('./getTransaction.js');
 const getSeats = require('./getSeats.js')
 const app = express();
 const { port } = require("./config");
@@ -27,6 +28,11 @@ app.post('/add', function (request, response) {
 app.post('/edit', function (request, response) {
     let idTransaksi = request.body.idTransaksi;
     editTransaction(idTransaksi, response);
+});
+
+app.get('/get', function (request, response) {
+    let idUser = request.query.idUser;
+    getTransaction(idUser, response);
 });
 
 app.get('/seat', function (request, response) {
