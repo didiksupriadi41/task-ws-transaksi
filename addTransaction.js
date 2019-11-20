@@ -1,7 +1,6 @@
 const mysql = require('mysql');
 const moment = require('moment');
-const { user, password } = require("./config");
-const defaultStatus = "pending";
+const { user, password, defaultStatus } = require("./config");
 
 module.exports = function addTransaction(idUser, virtualAccount, idMovie, idSchedule, seat, response) {
     if (idUser && virtualAccount && idMovie && idSchedule && seat && response) {
