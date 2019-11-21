@@ -7,12 +7,11 @@ const getTransaction = require('./getTransaction.js');
 const getSeats = require('./getSeats.js')
 const app = express();
 const { port } = require("./config");
+const cors = require("cors");
 
 
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    next();
-});
+
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
