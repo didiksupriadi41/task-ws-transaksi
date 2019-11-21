@@ -1,65 +1,57 @@
--- phpMyAdmin SQL Dump
--- version 4.8.4
--- https://www.phpmyadmin.net/
+-- MySQL dump 10.13  Distrib 8.0.18, for Linux (x86_64)
 --
--- Host: localhost
--- Waktu pembuatan: 06 Nov 2019 pada 07.35
--- Versi server: 10.1.37-MariaDB
--- Versi PHP: 7.3.0
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
-SET time_zone = "+00:00";
-
+-- Host: localhost    Database: ws-transaksi
+-- ------------------------------------------------------
+-- Server version	8.0.18-0ubuntu0.19.10.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Database: `ws-transaksi`
+-- Table structure for table `TransaksiTiket`
 --
 
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `TransaksiTiket`
---
-
+DROP TABLE IF EXISTS `TransaksiTiket`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `TransaksiTiket` (
-  `idTransaksi` int(11) NOT NULL,
+  `idTransaksi` int(11) NOT NULL AUTO_INCREMENT,
   `idUser` int(11) NOT NULL,
   `virtualAccount` varchar(20) NOT NULL,
   `idMovie` int(11) NOT NULL,
   `idSchedule` int(11) NOT NULL,
   `seat` int(11) NOT NULL,
   `creationTime` datetime NOT NULL,
-  `status` varchar(10) NOT NULL
+  `status` varchar(10) NOT NULL,
+  `isRated` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`idTransaksi`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Indexes for dumped tables
+-- Dumping data for table `TransaksiTiket`
 --
 
---
--- Indeks untuk tabel `TransaksiTiket`
---
-ALTER TABLE `TransaksiTiket`
-  ADD PRIMARY KEY (`idTransaksi`);
+LOCK TABLES `TransaksiTiket` WRITE;
+/*!40000 ALTER TABLE `TransaksiTiket` DISABLE KEYS */;
+/*!40000 ALTER TABLE `TransaksiTiket` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
---
--- AUTO_INCREMENT untuk tabel yang dibuang
---
-
---
--- AUTO_INCREMENT untuk tabel `TransaksiTiket`
---
-ALTER TABLE `TransaksiTiket`
-  MODIFY `idTransaksi` int(11) NOT NULL AUTO_INCREMENT;
-COMMIT;
-
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2019-11-21 15:05:37
