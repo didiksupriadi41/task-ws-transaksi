@@ -4,12 +4,11 @@ const bodyParser = require('body-parser');
 const addTransaction = require('./addTransaction.js');
 const editTransaction = require('./editTransaction.js');
 const getTransaction = require('./getTransaction.js');
-const getSeats = require('./getSeats.js')
+const getSeats = require('./getSeats.js');
+const editIsRated = require('./editIsRated.js');
 const app = express();
 const { port } = require("./config");
 const cors = require("cors");
-
-
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -28,6 +27,12 @@ app.post('/edit', function (request, response) {
     let idTransaksi = request.body.idTransaksi;
     editTransaction(idTransaksi, response);
 });
+
+app.post('/rate', function (request, response) {
+    let idTransaksi = request.body.idTransaksi;
+    let val = request.body.val;
+    editIsRated(idTransaksi, val, response);
+})
 
 app.get('/get', function (request, response) {
     let idUser = request.query.idUser;
