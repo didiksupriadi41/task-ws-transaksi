@@ -45,7 +45,7 @@ module.exports = function editTransaction(idTransaksi, response) {
         var statusTerkini;
 
         connection.connect();
-        var query = `SELECT creationTime, status from TransaksiTiket where idTransaksi=?`;
+        var query = `SELECT creationTime, status from TransaksiTiket WHERE idTransaksi=?`;
         connection.query(query, [idTransaksi], async function (err, result) {
             if (err) {
                 response.status(400).send("Wrong Query!");
