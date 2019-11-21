@@ -13,7 +13,7 @@ module.exports = function editIsRated(idTransaksi, val, response) {
         connection.connect();
 
         var query = `UPDATE TransaksiTiket SET isRated =? WHERE idTransaksi =?`;
-        connection.query(query, [val, idTransaksi], function (err, result) {
+        connection.query(query, [val, idTransaksi], function (err) {
             if (err) {
                 console.log(err);
                 response.status(400).send("Wrong Query!");
