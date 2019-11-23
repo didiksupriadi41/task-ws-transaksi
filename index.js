@@ -25,7 +25,8 @@ app.post('/add', function (request, response) {
 
 app.post('/edit', function (request, response) {
     let idTransaksi = request.body.idTransaksi;
-    editTransaction(idTransaksi, response);
+    let waktuDariEngima = request.body.waktuBayar;
+    editTransaction(idTransaksi, waktuDariEngima, response);
 });
 
 app.post('/rate', function (request, response) {
