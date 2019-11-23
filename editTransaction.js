@@ -29,8 +29,8 @@ function editCreationTime(idTransaksi, newStatus, response) {
     }
 }
 
-module.exports = function editTransaction(idTransaksi, response) {
-    if (idTransaksi && response) {
+module.exports = function editTransaction(idTransaksi, waktuDariEngima, response) {
+    if (idTransaksi && waktuDariEngima && response) {
 
         var connection = mysql.createConnection({
             host: 'localhost',
@@ -39,7 +39,7 @@ module.exports = function editTransaction(idTransaksi, response) {
             database: 'ws-transaksi'
         });
 
-        var now = moment();
+        waktuDariEngima = moment(waktuDariEngima);
         var waktuTransaksiDibuat;
         var selisihWaktuBookingBayar;
         var statusTerkini;
@@ -52,10 +52,10 @@ module.exports = function editTransaction(idTransaksi, response) {
                 console.log(err);
             }
             await (result);
-            if (result.length > 0) {
+            if (result.length > 0 && result[0].status == "pending") {
                 statusTerkini = result[0].status;
                 waktuTransaksiDibuat = moment(result[0].creationTime);
-                selisihWaktuBookingBayar = now.diff(waktuTransaksiDibuat, 'seconds')
+                selisihWaktuBookingBayar = waktuDariEngima.diff(waktuTransaksiDibuat, 'seconds')
 
                 if (selisihWaktuBookingBayar > 120 && statusTerkini != successStatus) {
                     statusTerkini = cancelledStatus;
@@ -64,8 +64,10 @@ module.exports = function editTransaction(idTransaksi, response) {
                 }
 
                 editCreationTime(idTransaksi, statusTerkini, response);
-            } else {
+            } else if (result[0].status == successStatus || result[0].status == cancelledStatus) {
                 response.status(403).send('Forbidden');
+            } else {
+                response.status(400).send('Wrong Query!');
             }
         });
 
