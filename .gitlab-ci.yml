@@ -19,6 +19,7 @@ lint:
 deployToAWS:
   only:
     - master
+    - development
   stage: deploy
   script:
     - bash deploy.sh
