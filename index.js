@@ -1,53 +1,50 @@
 /* eslint-disable no-undef */
 const express = require("express");
-const mysql = require('mysql');
-const moment = require('moment');
-
+const bodyParser = require('body-parser');
+const addTransaction = require('./addTransaction.js');
+const editTransaction = require('./editTransaction.js');
+const getTransaction = require('./getTransaction.js');
+const getSeats = require('./getSeats.js');
+const editIsRated = require('./editIsRated.js');
 const app = express();
-const defaultStatus = "pending";
+const { port } = require("./config");
+const cors = require("cors");
 
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-function addTransaction(idUser, virtualAccount, idMovie, idSchedule, seat, response) {
-    var connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: '',
-        database: 'ws-transaksi'
-    });
-
-    var now = moment().format("YYYY-MM-DD HH:mm:ss");
-    var idTransaksi = 0;
-
-    connection.connect();
-
-    var query = `INSERT INTO TransaksiTiket \
-            (idUser, virtualAccount, idMovie, idSchedule, seat, creationTime, status) \
-            VALUE (${idUser},${virtualAccount},${idMovie},${idSchedule},${seat},'${now}','${defaultStatus}')`;
-
-    connection.query(query, function (err, result) {
-        if (err) response.sendStatus(400).send("Wrong Query!");
-        idTransaksi = result.insertId;
-
-        response.send({ idTransaksi: idTransaksi });
-    });
-
-    connection.end();
-}
-
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    next();
-});
-
-app.post('/transaksi', function (request, response) {
-    let idUser = request.query.idUser;
-    let virtualAccount = request.query.virtualAccount;
-    let idMovie = request.query.idMovie;
-    let idSchedule = request.query.idSchedule;
-    let seat = request.query.seat;
+app.post('/add', function (request, response) {
+    let idUser = request.body.idUser;
+    let virtualAccount = request.body.virtualAccount;
+    let idMovie = request.body.idMovie;
+    let idSchedule = request.body.idSchedule;
+    let seat = request.body.seat;
     addTransaction(idUser, virtualAccount, idMovie, idSchedule, seat, response);
 });
 
-app.listen(3000, function () {
-    console.log("Server running on port 3000...");
+app.post('/edit', function (request, response) {
+    let idTransaksi = request.body.idTransaksi;
+    let waktuDariEngima = request.body.waktuBayar;
+    editTransaction(idTransaksi, waktuDariEngima, response);
+});
+
+app.post('/rate', function (request, response) {
+    let idTransaksi = request.body.idTransaksi;
+    let val = request.body.val;
+    editIsRated(idTransaksi, val, response);
+})
+
+app.get('/get', function (request, response) {
+    let idUser = request.query.idUser;
+    getTransaction(idUser, response);
+});
+
+app.get('/seat', function (request, response) {
+    let idSchedule = request.query.idSchedule;
+    getSeats(idSchedule, response);
+});
+
+app.listen(port, function () {
+    console.log(`Server running on port ${port}...`);
 });
