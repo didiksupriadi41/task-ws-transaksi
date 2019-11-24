@@ -13,12 +13,12 @@ module.exports = function getTransaction(idUser, response) {
 
         connection.connect();
 
-        var query = `SELECT * FROM TransaksiTiket WHERE idUser = ?`;
+        var query = `SELECT * FROM TransaksiTiket WHERE idUser = ? ORDER BY creationTime DESC`;
 
         connection.query(query, [idUser],
             function (err, result) {
                 if (err) {
-                  response.status(400).send("Wrong Query!");
+                    response.status(400).send("Wrong Query!");
                 }
 
                 response.send({ transaction : result });
