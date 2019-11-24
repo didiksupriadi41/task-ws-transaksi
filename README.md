@@ -27,9 +27,10 @@ RDBMS yang digunakan adalah **MySQL**, dengan skema table berikut:
 #### Pembagian tugas setiap anggota
 |**No**|**Fungsi**|**NIM**|
 |-|-|-|
-|1|F1|[13517012](#johanes)|
-|2|F2|[13517069](#didik-supriadi)|
-|3|F3|[13517126](#louis-cahyadi)|
+|1|TheMovieDB|[13517012](#johanes)|
+|1|Transaksi Fungsi tambah transaksi|[13517012](#johanes)|
+|3|Transaksi Fungsi mengubah status transaksi|[13517126](#louis-cahyadi)|
+|4|Transaksi Fungsi mengambil data transaksi user|[13517069](#didik-supriadi)|
 
 #### Pembagian tugas setiap anggota
 |**No**|**Tugas**|**NIM**|
